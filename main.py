@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""E-paper weather display: Waveshare 2.9" b/w/red (V4) on a Raspberry Pi.
+"""E-paper weather display: Waveshare 2.9" b/w/red (V3) on a Raspberry Pi.
 
 python3 weather.py            fetch weather, draw it, update the display
 python3 weather.py --preview  fetch weather, save preview.png, leave the display alone
@@ -123,13 +123,14 @@ def render(data):
     paste_icon(red if icon in RED_ICONS else black, icon, (16, 2))
 
     # current temperature, bottom left
-    txt, size = "%d°" % round(data["now"]), 80
+    txt, size = "%d°" % round(data["now"]), 40
     while True:
         f_big = font(FONT_BOLD, size)
-        if b.textlength(txt, font=f_big) <= 98 or size <= 24:
+        print(size)
+        if b.textlength(txt, font=f_big) <= 120 or size <= 24:
             break
         size -= 2
-    b.text((16, 78), txt, font=f_big, fill=0)
+    b.text((12, 72), txt, font=f_big, fill=0)
 
     # chart scales
     temp, rain, prob = data["temp"], data["rain"], data["prob"]
@@ -159,7 +160,7 @@ def render(data):
     # temperature curve (red) with a white halo through the bars
     pts = [(PX0 + (h + 0.5) * slot, ty(temp[h])) for h in range(24)]
     b.line(pts, fill=1, width=5, joint="curve")
-    r.line(pts, fill=0, width=2, joint="curve")
+    r.line(pts, fill=0, width=3, joint="curve")
 
     # axes, baseline, arrows
     for ax in (AX_L, AX_R):
