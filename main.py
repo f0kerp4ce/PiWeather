@@ -126,7 +126,6 @@ def render(data):
     txt, size = "%d°" % round(data["now"]), 40
     while True:
         f_big = font(FONT_BOLD, size)
-        print(size)
         if b.textlength(txt, font=f_big) <= 120 or size <= 24:
             break
         size -= 2
@@ -185,6 +184,24 @@ def render(data):
     return black, red
 
 
+# ---------------- error screen ----------------
+def render_error():
+    black = Image.new("1", (W, H), 1)
+    red = Image.new("1", (W, H), 1)
+    b, r = ImageDraw.Draw(black), ImageDraw.Draw(red)
+    f_title = font(FONT_BOLD, 18)
+    f_sub = font(FONT, 12)
+
+    # Draw a border frame
+    b.rectangle([8, 8, W - 9, H - 9], outline=0, width=2)
+    
+    # Error text messages
+    b.text((W // 2, 45), "WEATHER OFFLINE", font=f_title, fill=0, anchor="mm")
+    b.text((W // 2, 75), "No internet connection", font=f_sub, fill=0, anchor="mm")
+    b.text((W // 2, 95), "or API unavailable", font=f_sub, fill=0, anchor="mm")
+
+    return black, red
+
 # ---------------- output ----------------
 def save_preview(black, red, path):
     img = Image.new("RGB", (W, H), "white")
@@ -206,10 +223,10 @@ def main():
     args = sys.argv[1:]
     try:
         data = demo_weather() if "--demo" in args else fetch_weather()
+        black, red = render(data)
     except Exception as e:  # no Wi-Fi etc.: keep the last image on the screen
         print("Weather fetch failed:", e)
-        sys.exit(1)
-    black, red = render(data)
+        black, red = render_error()
     if "--preview" in args or "--demo" in args:
         save_preview(black, red, os.path.join(HERE, "preview.png"))
         print("saved preview.png")
