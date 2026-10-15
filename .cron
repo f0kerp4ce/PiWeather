@@ -1,0 +1,5 @@
+# Run at system startup
+@reboot /usr/bin/python3 /home/PiWeather/main.py
+
+# Run every 15 minutes
+*/15 * * * * /usr/bin/python3 /home/PiWeather/main.py
